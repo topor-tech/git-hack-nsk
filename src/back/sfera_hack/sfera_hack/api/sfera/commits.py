@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, Query, Request, Path
-from pydantic import BaseModel, Field
-from typing import Optional, List
-import httpx
 from datetime import datetime
+from typing import List, Optional
 
-router = APIRouter(
-    prefix="/projects/{projectKey}/repos/{repoName}/commits", tags=["repository"]
-)
+from fastapi import APIRouter, HTTPException, Path, Query, Request
+from pydantic import BaseModel, Field
+
+from sfera_hack.connetors.sfera import get_sfera_client
+
+router = APIRouter()
 
 
 # Pydantic models based on the swagger schema
@@ -50,10 +50,7 @@ class ErrorResponse(BaseModel):
     request_id: Optional[str] = None
 
 
-# Configuration
-SFERA_API_BASE_URL = (
-    "https://gateway-codemetrics.saas.sferaplatform.ru/app/sourcecode/api/api/v2"
-)
+# Configuration is now imported from config.py
 
 
 def get_auth_token(request: Request) -> str:
@@ -66,7 +63,10 @@ def get_auth_token(request: Request) -> str:
     return access_token
 
 
-@router.get("/", response_model=ListRepoCommitsResponse)
+@router.get(
+    "/projects/{projectKey}/repos/{repoName}/commits",
+    response_model=ListRepoCommitsResponse,
+)
 async def list_project_repo_commits(
     request: Request,
     projectKey: str = Path(
@@ -159,48 +159,9 @@ async def list_project_repo_commits(
         if fullHistory is not None:
             params["fullHistory"] = fullHistory
 
-        # Prepare headers with authentication
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
+        # Use Sfera API client
+        sfera_client = await get_sfera_client(access_token)
+        return await sfera_client.get_project_commits(projectKey, repoName, params)
 
-        # Make request to external Sfera API
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{SFERA_API_BASE_URL}/projects/{projectKey}/repos/{repoName}/commits",
-                params=params,
-                headers=headers,
-                timeout=30.0,
-            )
-
-            if response.status_code == 200:
-                return response.json()
-            elif response.status_code == 400:
-                raise HTTPException(
-                    status_code=400, detail="Bad Request - Invalid parameters"
-                )
-            elif response.status_code == 403:
-                raise HTTPException(
-                    status_code=403, detail="Forbidden - Insufficient permissions"
-                )
-            elif response.status_code == 500:
-                raise HTTPException(
-                    status_code=500, detail="Internal Server Error - External API error"
-                )
-            else:
-                raise HTTPException(
-                    status_code=response.status_code,
-                    detail=f"External API error: {response.text}",
-                )
-
-    except httpx.TimeoutException:
-        raise HTTPException(
-            status_code=504, detail="Gateway Timeout - External API request timed out"
-        )
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Bad Gateway - Failed to connect to external API: {str(e)}",
-        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
