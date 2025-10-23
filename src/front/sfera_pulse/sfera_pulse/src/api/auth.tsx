@@ -46,6 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(checkAuthStatus());
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
   const baseUrl = 'http://localhost:8000/api/sfera';
 
   const login = useCallback(async (credentials: LoginRequest): Promise<LoginResponse> => {
