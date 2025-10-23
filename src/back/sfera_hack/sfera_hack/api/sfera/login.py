@@ -42,7 +42,7 @@ async def login(request: LoginRequest, response: Response):
             key="ACCESS_TOKEN",
             value=access_token,
             httponly=True,
-            secure=True,
+            secure=False,  # Set to False for development (HTTP)
             samesite="lax",
             max_age=3600,  # 1 hour
         )
@@ -51,7 +51,7 @@ async def login(request: LoginRequest, response: Response):
             key="REFRESH_TOKEN",
             value=refresh_token,
             httponly=True,
-            secure=True,
+            secure=False,  # Set to False for development (HTTP)
             samesite="lax",
             max_age=86400,  # 24 hours
         )
@@ -60,7 +60,7 @@ async def login(request: LoginRequest, response: Response):
             key="CHECK_AUTH",
             value="true",
             httponly=True,
-            secure=True,
+            secure=False,  # Set to False for development (HTTP)
             samesite="lax",
             max_age=3600,  # 1 hour
         )
