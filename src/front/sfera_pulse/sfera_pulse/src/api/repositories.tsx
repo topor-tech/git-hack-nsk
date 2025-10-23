@@ -1,13 +1,17 @@
-export interface SimpleCommit {
-  message: string;
-  author: string;
+export interface Repository {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string;
   created_at: string;
+  updated_at: string;
 }
 
-export interface LastCommitsResponse {
-  commits: SimpleCommit[];
-  total?: number;
-  request_id?: string;
+export interface RepositoriesResponse {
+  data: Repository[];
+  page: any;
+  request_id: string;
+  status: string;
 }
 
 export interface ErrorResponse {
@@ -16,7 +20,7 @@ export interface ErrorResponse {
   request_id?: string;
 }
 
-export class CommitsService {
+export class RepositoriesService {
   private baseUrl = 'http://localhost:8000/api';
 
   // Helper function to get cookie value
@@ -28,17 +32,19 @@ export class CommitsService {
     return value || null;
   }
 
-  async getLastCommits(
+  async getRepositories(
     projectKey: string,
-    repoName: string,
     limit?: number,
-    rev?: string
-  ): Promise<LastCommitsResponse> {
+    sort?: string,
+    order?: string
+  ): Promise<RepositoriesResponse> {
     const params = new URLSearchParams();
+    params.append('project_key', projectKey);
     if (limit) params.append('limit', limit.toString());
-    if (rev) params.append('rev', rev);
+    if (sort) params.append('sort', sort);
+    if (order) params.append('order', order);
 
-    const url = `${this.baseUrl}/pulse/projects/${projectKey}/repos/${repoName}/last-commits?${params.toString()}`;
+    const url = `${this.baseUrl}/pulse/repositories?${params.toString()}`;
 
     // Get current authentication cookies
     const accessToken = this.getCookie('ACCESS_TOKEN');
@@ -66,12 +72,13 @@ export class CommitsService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ detail: 'Failed to fetch commits' }));
-      throw new Error(errorData.detail || 'Failed to fetch commits');
+      const errorData = await response.json().catch(() => ({ detail: 'Failed to fetch repositories' }));
+      throw new Error(errorData.detail || 'Failed to fetch repositories');
     }
 
-    return await response.json();
+    const result = await response.json();
+    return result;
   }
 }
 
-export const commitsService = new CommitsService();
+export const repositoriesService = new RepositoriesService();

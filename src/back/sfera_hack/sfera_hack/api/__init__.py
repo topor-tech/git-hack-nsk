@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .pulse.last_commits import router as pulse_router
+from .pulse import router as pulse_router
 from .sfera import router as sfera_router
 
 # Create main API router

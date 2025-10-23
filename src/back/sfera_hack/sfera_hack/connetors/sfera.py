@@ -86,6 +86,13 @@ class SferaAPIClient:
         """Get list of projects"""
         return await self._make_request("GET", "/projects", params=params)
 
+    async def get_repositories(
+        self, project_key: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Get list of repositories for a project"""
+        endpoint = f"/projects/{project_key}/repos"
+        return await self._make_request("GET", endpoint, params=params)
+
     async def get_project_commits(
         self, project_key: str, repo_name: str, params: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
