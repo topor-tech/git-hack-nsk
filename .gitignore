@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+*.egg
+*.pic
+
+
+
+# pyenv
+.python-version
+
+
+# PEP 582
+__pypackages__/
+
+
+# Environments
+.env
+.venv
+env/
+
+
+# mypy
+.mypy_cache/
+
+# PyCharm
+.idea/
+
+# React / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+
+# Compiled binary addons
+build/Release
+
+
+# IDEs and editors
+.vscode/
+.idea/
