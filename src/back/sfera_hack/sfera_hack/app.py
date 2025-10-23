@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 
-from sfera_hack.api.sfera.projects import router as projects_router
-from sfera_hack.api.sfera.login import router as login_router
+from sfera_hack.api import router as api_router
 
 
 app = FastAPI(
@@ -11,8 +10,7 @@ app = FastAPI(
 )
 
 # Include routers
-app.include_router(projects_router)
-app.include_router(login_router)
+app.include_router(api_router)
 
 
 @app.get("/")
