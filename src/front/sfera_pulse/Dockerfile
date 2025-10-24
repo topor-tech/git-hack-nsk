@@ -9,4 +9,4 @@ COPY ./package.json package-lock.json /app/
 WORKDIR /app
 RUN npm ci
 COPY --from=build-env /app/dist /app/dist
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000", "--allowed-hosts", "sfera.gitcto.space"]
