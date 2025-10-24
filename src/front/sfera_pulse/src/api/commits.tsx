@@ -1,17 +1,13 @@
-export interface Project {
-  id: number;
-  full_name: string;
-  description: string;
+export interface SimpleCommit {
+  message: string;
+  author: string;
   created_at: string;
-  updated_at: string;
-  groups: any;
 }
 
-export interface ProjectsResponse {
-  data: Project[];
-  page: any;
-  request_id: string;
-  status: string;
+export interface LastCommitsResponse {
+  commits: SimpleCommit[];
+  total?: number;
+  request_id?: string;
 }
 
 export interface ErrorResponse {
@@ -20,8 +16,10 @@ export interface ErrorResponse {
   request_id?: string;
 }
 
-export class ProjectsService {
-  private baseUrl = 'http://localhost:8000/api';
+import { getApiBaseUrl } from './config';
+
+export class CommitsService {
+  private baseUrl = getApiBaseUrl();
 
   // Helper function to get cookie value
   private getCookie(name: string): string | null {
@@ -32,17 +30,17 @@ export class ProjectsService {
     return value || null;
   }
 
-  async getProjects(
+  async getLastCommits(
+    projectKey: string,
+    repoName: string,
     limit?: number,
-    sort?: string,
-    order?: string
-  ): Promise<ProjectsResponse> {
+    rev?: string
+  ): Promise<LastCommitsResponse> {
     const params = new URLSearchParams();
     if (limit) params.append('limit', limit.toString());
-    if (sort) params.append('sort', sort);
-    if (order) params.append('order', order);
+    if (rev) params.append('rev', rev);
 
-    const url = `${this.baseUrl}/pulse/projects?${params.toString()}`;
+    const url = `${this.baseUrl}/pulse/projects/${projectKey}/repos/${repoName}/last-commits?${params.toString()}`;
 
     // Get current authentication cookies
     const accessToken = this.getCookie('ACCESS_TOKEN');
@@ -70,13 +68,12 @@ export class ProjectsService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ detail: 'Failed to fetch projects' }));
-      throw new Error(errorData.detail || 'Failed to fetch projects');
+      const errorData = await response.json().catch(() => ({ detail: 'Failed to fetch commits' }));
+      throw new Error(errorData.detail || 'Failed to fetch commits');
     }
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   }
 }
 
-export const projectsService = new ProjectsService();
+export const commitsService = new CommitsService();
