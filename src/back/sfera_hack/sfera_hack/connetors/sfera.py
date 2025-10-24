@@ -121,6 +121,20 @@ class SferaAPIClient:
         endpoint = f"/projects/{project_key}/repos/{repo_name}/branches"
         return await self._make_request("GET", endpoint, params=params)
 
+    async def get_project_commits_diff(
+        self, project_key: str, repo_name: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Get commits diff for a project repository"""
+        endpoint = f"/projects/{project_key}/repos/{repo_name}/commits/diff"
+        return await self._make_request("GET", endpoint, params=params)
+
+    async def get_project_commit_diff(
+        self, project_key: str, repo_name: str, sha1: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Get diff for a specific commit by SHA1 hash"""
+        endpoint = f"/projects/{project_key}/repos/{repo_name}/commits/{sha1}/diff"
+        return await self._make_request("GET", endpoint, params=params)
+
 
 class SferaAuthClient:
     """Client for Sfera authentication"""
