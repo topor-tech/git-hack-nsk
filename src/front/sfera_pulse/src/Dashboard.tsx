@@ -135,6 +135,66 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               </div>
             </div>
 
+            {/* Overall Statistics */}
+            <div className="widget overall-stats">
+              <h3>Overall Statistics</h3>
+              <div className="stats-grid">
+                <div className="stat-row">
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.total_commits}</div>
+                    <div className="stat-label">Total Commits</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.total_lines_added.toLocaleString()}</div>
+                    <div className="stat-label">Lines Added</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.total_lines_removed.toLocaleString()}</div>
+                    <div className="stat-label">Lines Removed</div>
+                  </div>
+                </div>
+                <div className="stat-row">
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.net_lines_changed.toLocaleString()}</div>
+                    <div className="stat-label">Net Lines Changed</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.total_files_changed}</div>
+                    <div className="stat-label">Files Changed</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.average_commit_size.toFixed(1)}</div>
+                    <div className="stat-label">Avg Commit Size</div>
+                  </div>
+                </div>
+                <div className="stat-row">
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.average_commits_per_day.toFixed(1)}</div>
+                    <div className="stat-label">Avg Commits/Day</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.average_changes_per_day.toLocaleString()}</div>
+                    <div className="stat-label">Avg Changes/Day</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.average_files_per_commit.toFixed(1)}</div>
+                    <div className="stat-label">Avg Files/Commit</div>
+                  </div>
+                </div>
+                <div className="stat-row">
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.large_commits_count}</div>
+                    <div className="stat-label">Large Commits ({dashboardData.overall_stats.large_commits_percentage}%)</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">{dashboardData.overall_stats.small_commits_count}</div>
+                    <div className="stat-label">Small Commits ({dashboardData.overall_stats.small_commits_percentage}%)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
             {/* Daily Activity */}
             <div className="widget daily-activity">
               <h3>Daily Activity</h3>
@@ -238,6 +298,61 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Commit Pulse */}
+            <div className="widget commit-pulse">
+              <h3>Commit Pulse</h3>
+              <div className="commits-table-container">
+                <table className="commits-table">
+                  <thead>
+                    <tr>
+                      <th>Hash</th>
+                      <th>Author</th>
+                      <th>Message</th>
+                      <th>Date</th>
+                      <th>Lines Added</th>
+                      <th>Lines Removed</th>
+                      <th>Net Change</th>
+                      <th>Files</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dashboardData.commit_stats.map((commit) => (
+                      <tr key={commit.commit_hash} className="commit-row">
+                        <td className="commit-hash">
+                          <code>{commit.commit_hash.substring(0, 8)}</code>
+                        </td>
+                        <td className="commit-author">{commit.author}</td>
+                        <td className="commit-message" title={commit.message}>
+                          {commit.message.split('\n')[0]}
+                        </td>
+                        <td className="commit-date">
+                          {new Date(commit.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </td>
+                        <td className="stat-cell added">
+                          +{typeof commit.lines_added === 'number' ? commit.lines_added.toLocaleString() : '0'}
+                        </td>
+                        <td className="stat-cell removed">
+                          -{typeof commit.lines_removed === 'number' ? commit.lines_removed.toLocaleString() : '0'}
+                        </td>
+                        <td className="stat-cell net">
+                          {typeof commit.net_lines_changed === 'number' && commit.net_lines_changed > 0 ? '+' : ''}{typeof commit.net_lines_changed === 'number' ? commit.net_lines_changed.toLocaleString() : '0'}
+                        </td>
+                        <td className="stat-cell files">
+                          {typeof commit.files_changed === 'number' ? commit.files_changed : 0}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 

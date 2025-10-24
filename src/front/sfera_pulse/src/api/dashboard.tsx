@@ -13,6 +13,33 @@ export interface CommitPattern {
   percentage: number;
 }
 
+export interface OverallStats {
+  total_commits: number;
+  total_lines_added: number;
+  total_lines_removed: number;
+  total_files_changed: number;
+  net_lines_changed: number;
+  average_commit_size: number;
+  average_changes_per_day: number;
+  average_commits_per_day: number;
+  average_files_per_commit: number;
+  large_commits_count: number;
+  small_commits_count: number;
+  large_commits_percentage: number;
+  small_commits_percentage: number;
+}
+
+export interface CommitStat {
+  commit_hash: string;
+  lines_added: number;
+  lines_removed: number;
+  files_changed: number;
+  net_lines_changed: number;
+  author: string;
+  message: string;
+  created_at: string;
+}
+
 export interface DashboardStats {
   total_commits: number;
   analysis_period: {
@@ -23,6 +50,8 @@ export interface DashboardStats {
   commit_patterns: CommitPattern[];
   daily_activity: Record<string, number>;
   hourly_activity: Record<string, number>;
+  overall_stats: OverallStats;
+  commit_stats: CommitStat[];
   request_id?: string;
 }
 
