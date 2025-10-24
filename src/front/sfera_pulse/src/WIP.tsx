@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { wipService, type WIPBranch } from './api/wip';
 import ProjectRepositorySelector from './components/ProjectRepositorySelector';
 import Navbar from './components/Navbar';
@@ -9,12 +10,30 @@ interface WIPProps {
 }
 
 export default function WIP({ onLogout }: WIPProps) {
-  const [selectedProject, setSelectedProject] = useState<string>('');
-  const [selectedRepository, setSelectedRepository] = useState<string>('');
-  const [limit, setLimit] = useState<number>(20);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedProject, setSelectedProject] = useState<string>(searchParams.get('project') || '');
+  const [selectedRepository, setSelectedRepository] = useState<string>(searchParams.get('repository') || '');
+  const [limit, setLimit] = useState<number>(parseInt(searchParams.get('limit') || '20'));
   const [branches, setBranches] = useState<WIPBranch[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+
+  // Handle URL parameter changes
+  useEffect(() => {
+    const urlLimit = searchParams.get('limit');
+    const urlProject = searchParams.get('project');
+    const urlRepository = searchParams.get('repository');
+
+    if (urlLimit && parseInt(urlLimit) !== limit) {
+      setLimit(parseInt(urlLimit));
+    }
+    if (urlProject && urlProject !== selectedProject) {
+      setSelectedProject(urlProject);
+    }
+    if (urlRepository && urlRepository !== selectedRepository) {
+      setSelectedRepository(urlRepository);
+    }
+  }, [searchParams]);
 
   // Fetch WIP branches when project and repository are selected
   useEffect(() => {
@@ -22,6 +41,15 @@ export default function WIP({ onLogout }: WIPProps) {
       fetchWIPBranches();
     }
   }, [selectedProject, selectedRepository, limit]);
+
+  // Update URL parameters when state changes
+  useEffect(() => {
+    updateUrlParams({
+      limit,
+      project: selectedProject,
+      repository: selectedRepository
+    });
+  }, [limit, selectedProject, selectedRepository]);
 
   const fetchWIPBranches = async () => {
     if (!selectedProject || !selectedRepository) return;
@@ -61,6 +89,30 @@ export default function WIP({ onLogout }: WIPProps) {
 
   const handleError = (errorMessage: string) => {
     setError(errorMessage);
+  };
+
+  const updateUrlParams = (updates: { limit?: number; project?: string; repository?: string }) => {
+    const newParams = new URLSearchParams(searchParams);
+
+    if (updates.limit !== undefined) {
+      newParams.set('limit', updates.limit.toString());
+    }
+    if (updates.project !== undefined) {
+      if (updates.project) {
+        newParams.set('project', updates.project);
+      } else {
+        newParams.delete('project');
+      }
+    }
+    if (updates.repository !== undefined) {
+      if (updates.repository) {
+        newParams.set('repository', updates.repository);
+      } else {
+        newParams.delete('repository');
+      }
+    }
+
+    setSearchParams(newParams);
   };
 
   // Calculate cycle time (time from now to branch creation)
