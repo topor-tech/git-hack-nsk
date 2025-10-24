@@ -1,0 +1,8 @@
+services:
+  sfera-hack:
+    build:
+      context: ../src/back/sfera_hack
+      dockerfile: Dockerfile
+    ports:
+      - "6000:8000"
+    restart: unless-stopped
