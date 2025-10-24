@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -7,6 +7,13 @@ interface NavbarProps {
 
 export default function Navbar({ onLogout }: NavbarProps) {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  // Create links that preserve current URL parameters
+  const createLinkWithParams = (path: string) => {
+    const currentParams = searchParams.toString();
+    return currentParams ? `${path}?${currentParams}` : path;
+  };
 
   return (
     <nav className="navbar">
@@ -15,13 +22,13 @@ export default function Navbar({ onLogout }: NavbarProps) {
       </div>
       <div className="navbar-nav">
         <Link
-          to="/pulse"
+          to={createLinkWithParams("/pulse")}
           className={`nav-link ${location.pathname === '/pulse' ? 'active' : ''}`}
         >
           Pulse
         </Link>
         <Link
-          to="/wip"
+          to={createLinkWithParams("/wip")}
           className={`nav-link ${location.pathname === '/wip' ? 'active' : ''}`}
         >
           WIP
