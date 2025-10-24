@@ -174,9 +174,9 @@ async def get_dashboard(
     """
     try:
         # Validate limit
-        if limit and (limit < 1 or limit > 1000):
+        if limit and (limit < 1 or limit > 5000):
             raise HTTPException(
-                status_code=400, detail="Limit must be between 1 and 1000"
+                status_code=400, detail="Limit must be between 1 and 5000"
             )
 
         # Get authentication token from cookies

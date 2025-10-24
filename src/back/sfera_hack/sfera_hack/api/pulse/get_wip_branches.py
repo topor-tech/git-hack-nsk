@@ -98,9 +98,9 @@ async def get_project_branches(
     """
     try:
         # Validate limit
-        if limit and (limit < 1 or limit > 100):
+        if limit and (limit < 1 or limit > 5000):
             raise HTTPException(
-                status_code=400, detail="Limit must be between 1 and 100"
+                status_code=400, detail="Limit must be between 1 and 5000"
             )
 
         # Get authentication token from cookies

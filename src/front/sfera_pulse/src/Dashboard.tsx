@@ -115,6 +115,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
         {dashboardData && !loading && (
           <div className="dashboard-widgets">
+
             {/* Overview Stats */}
             <div className="widget overview-stats">
               <h3>Overview</h3>
@@ -133,6 +134,65 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                 </div>
               </div>
             </div>
+
+            {/* Daily Activity */}
+            <div className="widget daily-activity">
+              <h3>Daily Activity</h3>
+              <div className="activity-chart">
+                {Object.entries(dashboardData.daily_activity)
+                  .sort(([a], [b]) => {
+                    const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                    return dayOrder.indexOf(a) - dayOrder.indexOf(b);
+                  })
+                  .map(([day, count]) => {
+                    const maxCount = Math.max(...Object.values(dashboardData.daily_activity));
+                    const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                    
+                    return (
+                      <div key={day} className="activity-bar">
+                        <div className="bar-container">
+                          <div 
+                            className="bar-fill" 
+                            style={{ height: `${percentage}%` }}
+                          ></div>
+                        </div>
+                        <div className="bar-label">{day.slice(0, 3)}</div>
+                        <div className="bar-value">{count}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Hourly Activity */}
+            <div className="widget hourly-activity">
+              <h3>Hourly Activity</h3>
+              <div className="timezone-legend">
+                <span className="timezone-label">Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}</span>
+              </div>
+              <div className="hourly-chart">
+                {Object.entries(dashboardData.hourly_activity)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([hour, count]) => {
+                    const maxCount = Math.max(...Object.values(dashboardData.hourly_activity));
+                    const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                    
+                    return (
+                      <div key={hour} className="hourly-bar">
+                        <div className="bar-container">
+                          <div 
+                            className="bar-fill" 
+                            style={{ height: `${percentage}%` }}
+                          ></div>
+                        </div>
+                        <div className="bar-label">{hour}</div>
+                        <div className="bar-value">{count}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
 
             {/* Top Authors */}
             <div className="widget top-authors">
@@ -181,55 +241,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               </div>
             </div>
 
-            {/* Daily Activity */}
-            <div className="widget daily-activity">
-              <h3>Daily Activity</h3>
-              <div className="activity-chart">
-                {Object.entries(dashboardData.daily_activity).map(([day, count]) => {
-                  const maxCount = Math.max(...Object.values(dashboardData.daily_activity));
-                  const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
-                  
-                  return (
-                    <div key={day} className="activity-bar">
-                      <div className="bar-container">
-                        <div 
-                          className="bar-fill" 
-                          style={{ height: `${percentage}%` }}
-                        ></div>
-                      </div>
-                      <div className="bar-label">{day.slice(0, 3)}</div>
-                      <div className="bar-value">{count}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Hourly Activity */}
-            <div className="widget hourly-activity">
-              <h3>Hourly Activity</h3>
-              <div className="hourly-chart">
-                {Object.entries(dashboardData.hourly_activity)
-                  .sort(([a], [b]) => a.localeCompare(b))
-                  .map(([hour, count]) => {
-                    const maxCount = Math.max(...Object.values(dashboardData.hourly_activity));
-                    const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
-                    
-                    return (
-                      <div key={hour} className="hourly-bar">
-                        <div className="bar-container">
-                          <div 
-                            className="bar-fill" 
-                            style={{ height: `${percentage}%` }}
-                          ></div>
-                        </div>
-                        <div className="bar-label">{hour}</div>
-                        <div className="bar-value">{count}</div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
           </div>
         )}
 

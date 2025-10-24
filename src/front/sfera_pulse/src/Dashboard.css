@@ -111,7 +111,6 @@
 }
 
 .widget:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
   border-color: var(--border-secondary);
 }
@@ -164,7 +163,6 @@
 }
 
 .stat-item:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   border-color: var(--border-secondary);
 }
@@ -219,7 +217,6 @@
 
 .author-item:hover {
   background: var(--bg-hover);
-  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: var(--border-secondary);
 }
@@ -301,7 +298,6 @@
 
 .pattern-item:hover {
   background: var(--bg-hover);
-  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: var(--border-secondary);
 }
@@ -390,6 +386,22 @@
 }
 
 /* Hourly Activity */
+.timezone-legend {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-primary);
+}
+
+.timezone-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-style: italic;
+}
+
 .hourly-chart {
   display: flex;
   align-items: end;
@@ -509,7 +521,6 @@
 
 .retry-btn:hover {
   background: #cc3333;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
 }
 
