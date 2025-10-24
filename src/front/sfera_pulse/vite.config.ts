@@ -5,12 +5,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: ['sfera.gitcto.space']
-  },
-  preview: {
     host: '0.0.0.0',
     port: 3000,
     strictPort: true,
-    allowedHosts: ['sfera.gitcto.space']
+    allowedHosts: ['sfera.gitcto.space', 'localhost', '127.0.0.1']
+  },
+  preview: {  
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: true,
+    allowedHosts: ['sfera.gitcto.space', 'localhost', '127.0.0.1']
   }
 })
