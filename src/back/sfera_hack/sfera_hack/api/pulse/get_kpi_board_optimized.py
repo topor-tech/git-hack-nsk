@@ -151,7 +151,7 @@ class OptimizedKPICalculator:
         # Calculate throughput score
         try:
             if (self.analysis_period.get("start") != "N/A" and 
-                self.analysis_period.get("end") != "N/A")):
+                self.analysis_period.get("end") != "N/A"):
                 start_date = datetime.strptime(self.analysis_period["start"], "%Y-%m-%d")
                 end_date = datetime.strptime(self.analysis_period["end"], "%Y-%m-%d")
                 days_diff = (end_date - start_date).days + 1

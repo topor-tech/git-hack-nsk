@@ -105,7 +105,7 @@ class KPIBoardService {
     }
 
     const queryString = searchParams.toString();
-    const url = `${this.baseUrl}/pulse/projects/${encodeURIComponent(projectKey)}/repos/${encodeURIComponent(repoName)}/kpi-board${queryString ? `?${queryString}` : ''}`;
+    const url = `${this.baseUrl}/pulse/projects/${encodeURIComponent(projectKey)}/repos/${encodeURIComponent(repoName)}/kpi-board-optimized${queryString ? `?${queryString}` : ''}`;
 
     const response = await fetch(url, {
       method: 'GET',
