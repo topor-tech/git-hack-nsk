@@ -22,6 +22,13 @@ export default function Navbar({ onLogout }: NavbarProps) {
       </div>
       <div className="navbar-nav">
         <Link
+          to={createLinkWithParams("/dashboard")}
+          className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+        >
+          Dashboard
+        </Link>
+
+        <Link
           to={createLinkWithParams("/pulse")}
           className={`nav-link ${location.pathname === '/pulse' ? 'active' : ''}`}
         >
@@ -32,12 +39,6 @@ export default function Navbar({ onLogout }: NavbarProps) {
           className={`nav-link ${location.pathname === '/wip' ? 'active' : ''}`}
         >
           WIP
-        </Link>
-        <Link
-          to={createLinkWithParams("/dashboard")}
-          className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
-        >
-          Dashboard
         </Link>
       </div>
       <div className="navbar-actions">
