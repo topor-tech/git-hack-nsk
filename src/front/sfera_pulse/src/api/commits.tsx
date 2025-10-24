@@ -16,8 +16,10 @@ export interface ErrorResponse {
   request_id?: string;
 }
 
+import { getApiBaseUrl } from './config';
+
 export class CommitsService {
-  private baseUrl = 'http://localhost:8000/api';
+  private baseUrl = getApiBaseUrl();
 
   // Helper function to get cookie value
   private getCookie(name: string): string | null {
