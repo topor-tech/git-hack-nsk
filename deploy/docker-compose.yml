@@ -6,3 +6,13 @@ services:
     ports:
       - "6000:8000"
     restart: unless-stopped
+
+  sfera-pulse:
+    build:
+      context: ../src/front/sfera_pulse
+      dockerfile: Dockerfile
+    ports:
+      - "6333:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { getSferaApiBaseUrl } from './config';
 
 export interface LoginRequest {
   username: string;
@@ -47,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const baseUrl = 'http://localhost:8000/api/sfera';
+  const baseUrl = getSferaApiBaseUrl();
 
   const login = useCallback(async (credentials: LoginRequest): Promise<LoginResponse> => {
     setLoading(true);
@@ -126,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 // Legacy service class for backward compatibility
 export class AuthService {
-  private baseUrl = 'http://127.0.0.1:8000/api/sfera';
+  private baseUrl = getSferaApiBaseUrl();
 
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await fetch(`${this.baseUrl}/auth/login`, {
