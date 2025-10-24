@@ -114,6 +114,13 @@ class SferaAPIClient:
         endpoint = f"/projects/{project_key}/repos/{repo_name}/pull-requests/{pr_id}"
         return await self._make_request("GET", endpoint)
 
+    async def get_project_branches(
+        self, project_key: str, repo_name: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Get branches for a project repository"""
+        endpoint = f"/projects/{project_key}/repos/{repo_name}/branches"
+        return await self._make_request("GET", endpoint, params=params)
+
 
 class SferaAuthClient:
     """Client for Sfera authentication"""

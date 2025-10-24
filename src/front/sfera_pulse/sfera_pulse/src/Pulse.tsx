@@ -1,34 +1,41 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { commitsService, type SimpleCommit } from './api/commits';
-import { projectsService, type Project } from './api/projects';
-import { repositoriesService, type Repository } from './api/repositories';
-import './Home.css';
+import ProjectRepositorySelector from './components/ProjectRepositorySelector';
+import Navbar from './components/Navbar';
+import './Pulse.css';
 
-interface HomeProps {
+interface PulseProps {
   onLogout: () => void;
 }
 
-export default function Home({ onLogout }: HomeProps) {
+export default function Pulse({ onLogout }: PulseProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [commits, setCommits] = useState<SimpleCommit[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const [limit, setLimit] = useState(10);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<string>('');
-  const [projectsLoading, setProjectsLoading] = useState(true);
-  const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [selectedRepository, setSelectedRepository] = useState<string>('');
-  const [repositoriesLoading, setRepositoriesLoading] = useState(false);
+  const [limit, setLimit] = useState(parseInt(searchParams.get('limit') || '10'));
+  const [selectedProject, setSelectedProject] = useState<string>(searchParams.get('project') || '');
+  const [selectedRepository, setSelectedRepository] = useState<string>(searchParams.get('repository') || '');
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
 
+  // Handle URL parameter changes
   useEffect(() => {
-    if (selectedProject) {
-      fetchRepositories();
+    const urlLimit = searchParams.get('limit');
+    const urlProject = searchParams.get('project');
+    const urlRepository = searchParams.get('repository');
+
+    if (urlLimit && parseInt(urlLimit) !== limit) {
+      setLimit(parseInt(urlLimit));
     }
-  }, [selectedProject]);
+    if (urlProject && urlProject !== selectedProject) {
+      setSelectedProject(urlProject);
+    }
+    if (urlRepository && urlRepository !== selectedRepository) {
+      setSelectedRepository(urlRepository);
+    }
+  }, [searchParams]);
+
 
   useEffect(() => {
     if (selectedProject && selectedRepository) {
@@ -36,39 +43,15 @@ export default function Home({ onLogout }: HomeProps) {
     }
   }, [limit, selectedProject, selectedRepository]);
 
-  const fetchProjects = async () => {
-    setProjectsLoading(true);
-    try {
-      const response = await projectsService.getProjects(30, 'name', 'asc');
-      setProjects(response.data || []);
-      // Set the first project as default
-      if (response.data && response.data.length > 0) {
-        setSelectedProject(response.data[0].full_name);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch projects');
-    } finally {
-      setProjectsLoading(false);
-    }
-  };
+  // Update URL parameters when state changes
+  useEffect(() => {
+    updateUrlParams({
+      limit,
+      project: selectedProject,
+      repository: selectedRepository
+    });
+  }, [limit, selectedProject, selectedRepository]);
 
-  const fetchRepositories = async () => {
-    if (!selectedProject) return;
-
-    setRepositoriesLoading(true);
-    try {
-      const response = await repositoriesService.getRepositories(selectedProject, 30, 'name', 'asc');
-      setRepositories(response.data || []);
-      // Set the first repository as default
-      if (response.data && response.data.length > 0) {
-        setSelectedRepository(response.data[0].name);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch repositories');
-    } finally {
-      setRepositoriesLoading(false);
-    }
-  };
 
   const fetchCommits = async () => {
     if (!selectedProject || !selectedRepository) return;
@@ -119,100 +102,59 @@ export default function Home({ onLogout }: HomeProps) {
     });
   };
 
-  const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLimit(parseInt(e.target.value));
+  const updateUrlParams = (updates: { limit?: number; project?: string; repository?: string }) => {
+    const newParams = new URLSearchParams(searchParams);
+
+    if (updates.limit !== undefined) {
+      newParams.set('limit', updates.limit.toString());
+    }
+    if (updates.project !== undefined) {
+      if (updates.project) {
+        newParams.set('project', updates.project);
+      } else {
+        newParams.delete('project');
+      }
+    }
+    if (updates.repository !== undefined) {
+      if (updates.repository) {
+        newParams.set('repository', updates.repository);
+      } else {
+        newParams.delete('repository');
+      }
+    }
+
+    setSearchParams(newParams);
   };
 
-  const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedProject(e.target.value);
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+  };
+
+  const handleProjectChange = (newProject: string) => {
+    setSelectedProject(newProject);
     setSelectedRepository(''); // Reset repository selection when project changes
   };
 
-  const handleRepositoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedRepository(e.target.value);
+  const handleRepositoryChange = (newRepository: string) => {
+    setSelectedRepository(newRepository);
   };
 
   return (
+    <div>
+    <Navbar onLogout={onLogout} />
     <div className="home">
-      <div className="home-header">
-        <h1>Sfera Pulse Dashboard</h1>
-        <div className="header-controls">
-          <div className="limit-selector">
-            <label htmlFor="limit">Show commits:</label>
-            <select
-              id="limit"
-              value={limit}
-              onChange={handleLimitChange}
-              disabled={loading}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-          </div>
-          <button onClick={onLogout} className="logout-btn">
-            Logout
-          </button>
-        </div>
-      </div>
 
-      <div className="project-info">
-        <h2>Project & Repository Selection</h2>
-        {projectsLoading ? (
-          <div className="selectors-container">
-            <div className="project-selector">
-              <div className="skeleton-label"></div>
-              <div className="skeleton-select"></div>
-            </div>
-          </div>
-        ) : (
-          <div className="selectors-container">
-            <div className="project-selector">
-              <label htmlFor="project-select">Select Project: </label>
-              <select
-                id="project-select"
-                value={selectedProject}
-                onChange={handleProjectChange}
-                disabled={loading}
-              >
-                {projects.map((project) => (
-                  <option key={project.id} value={project.full_name}>
-                    {project.full_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {selectedProject && (
-              <div className="repository-selector">
-                {repositoriesLoading ? (
-                  <div className="repository-selector">
-                    <div className="skeleton-label"></div>
-                    <div className="skeleton-select"></div>
-                  </div>
-                ) : (
-                  <div>
-                    <label htmlFor="repository-select">Select Repository: </label>
-                    <select
-                      id="repository-select"
-                      value={selectedRepository}
-                      onChange={handleRepositoryChange}
-                      disabled={loading}
-                    >
-                      {repositories.map((repository) => (
-                        <option key={repository.id} value={repository.name}>
-                          {repository.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <ProjectRepositorySelector
+        selectedProject={selectedProject}
+        selectedRepository={selectedRepository}
+        limit={limit}
+        loading={loading}
+        onProjectChange={handleProjectChange}
+        onRepositoryChange={handleRepositoryChange}
+        onLimitChange={handleLimitChange}
+        onError={setError}
+        showCommitsLimit={true}
+      />
 
       {loading && (
         <div className="loading">
@@ -366,6 +308,7 @@ export default function Home({ onLogout }: HomeProps) {
           )}
         </div>
       )}
+    </div>
     </div>
   );
 }

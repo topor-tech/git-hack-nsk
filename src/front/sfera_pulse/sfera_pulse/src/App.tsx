@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { authService, type LoginRequest } from './api/auth'
-import Home from './Home'
+import Pulse from './Pulse.tsx'
+import WIP from './WIP.tsx'
 import './App.css'
 
 function App() {
@@ -42,57 +44,68 @@ function App() {
     }))
   }
 
-  if (isLoggedIn) {
-    return <Home onLogout={handleLogout} />
+  if (!isLoggedIn) {
+    return (
+      <div className="app">
+        <div className="login-container">
+          <h1>Sfera Pulse Login</h1>
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="form-group">
+              <label htmlFor="username">Username:</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={loginForm.username}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter your username"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={loginForm.password}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter your password"
+              />
+            </div>
+
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="login-btn"
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="app">
-      <div className="login-container">
-        <h1>Sfera Pulse Login</h1>
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={loginForm.username}
-              onChange={handleInputChange}
-              required
-              placeholder="Enter your username"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={loginForm.password}
-              onChange={handleInputChange}
-              required
-              placeholder="Enter your password"
-            />
-          </div>
-
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="login-btn"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/pulse" element={<Pulse onLogout={handleLogout} />} />
+          <Route path="/wip" element={<WIP onLogout={handleLogout} />} />
+          <Route path="/" element={<Navigate to="/pulse" replace />} />
+          <Route path="*" element={<Navigate to="/pulse" replace />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   )
 }
 
