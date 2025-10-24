@@ -2,84 +2,84 @@
 
 ```mermaid
 sequenceDiagram
-    participant User as 👤 Пользователь
-    participant WebUI as 🌐 Web Interface<br/>(React Frontend)
-    participant Backend as ⚙️ Backend API<br/>(FastAPI)
-    participant SferaAPI as 🔗 Sfera API<br/>(External)
-    participant GitDB as 📊 Git/DB<br/>(Repository Storage)
+    participant User as User
+    participant WebUI as Web Interface
+    participant Backend as Backend API
+    participant SferaAPI as Sfera API
+    participant GitDB as Git/DB
 
-    Note over User, GitDB: Аутентификация пользователя
-    User->>WebUI: 1. Ввод логина/пароля
+    Note over User, GitDB: Authentication Flow
+    User->>WebUI: 1. Enter login/password
     WebUI->>Backend: 2. POST /api/sfera/auth/login
     Backend->>SferaAPI: 3. POST /app/ppau/api/auth/login
     SferaAPI-->>Backend: 4. access_token + refresh_token
-    Backend-->>WebUI: 5. Токены аутентификации
-    WebUI-->>User: 6. Успешный вход в систему
+    Backend-->>WebUI: 5. Authentication tokens
+    WebUI-->>User: 6. Login successful
 
-    Note over User, GitDB: Получение списка проектов
-    User->>WebUI: 7. Запрос списка проектов
+    Note over User, GitDB: Get Projects List
+    User->>WebUI: 7. Request projects list
     WebUI->>Backend: 8. GET /api/sfera/projects
-    Backend->>SferaAPI: 9. GET /projects (с токеном)
-    SferaAPI->>GitDB: 10. Запрос проектов из репозиториев
-    GitDB-->>SferaAPI: 11. Список проектов
-    SferaAPI-->>Backend: 12. JSON с проектами
-    Backend-->>WebUI: 13. Данные проектов
-    WebUI-->>User: 14. Отображение списка проектов
+    Backend->>SferaAPI: 9. GET /projects (with token)
+    SferaAPI->>GitDB: 10. Query projects from repositories
+    GitDB-->>SferaAPI: 11. Projects list
+    SferaAPI-->>Backend: 12. JSON with projects
+    Backend-->>WebUI: 13. Projects data
+    WebUI-->>User: 14. Display projects list
 
-    Note over User, GitDB: Получение репозиториев проекта
-    User->>WebUI: 15. Выбор проекта
+    Note over User, GitDB: Get Project Repositories
+    User->>WebUI: 15. Select project
     WebUI->>Backend: 16. GET /api/sfera/projects/{key}/repos
     Backend->>SferaAPI: 17. GET /projects/{key}/repos
-    SferaAPI->>GitDB: 18. Запрос репозиториев проекта
-    GitDB-->>SferaAPI: 19. Список репозиториев
-    SferaAPI-->>Backend: 20. JSON с репозиториями
-    Backend-->>WebUI: 21. Данные репозиториев
-    WebUI-->>User: 22. Отображение репозиториев
+    SferaAPI->>GitDB: 18. Query project repositories
+    GitDB-->>SferaAPI: 19. Repositories list
+    SferaAPI-->>Backend: 20. JSON with repositories
+    Backend-->>WebUI: 21. Repositories data
+    WebUI-->>User: 22. Display repositories
 
-    Note over User, GitDB: Получение коммитов (Pulse Dashboard)
-    User->>WebUI: 23. Запрос последних коммитов
+    Note over User, GitDB: Get Commits (Pulse Dashboard)
+    User->>WebUI: 23. Request recent commits
     WebUI->>Backend: 24. GET /api/pulse/last-commits
     Backend->>SferaAPI: 25. GET /projects/{key}/repos/{repo}/commits
-    SferaAPI->>GitDB: 26. Запрос истории коммитов
-    GitDB-->>SferaAPI: 27. Данные коммитов
-    SferaAPI-->>Backend: 28. JSON с коммитами
-    Backend-->>WebUI: 29. Обработанные данные коммитов
-    WebUI-->>User: 30. Отображение Pulse Dashboard
+    SferaAPI->>GitDB: 26. Query commit history
+    GitDB-->>SferaAPI: 27. Commits data
+    SferaAPI-->>Backend: 28. JSON with commits
+    Backend-->>WebUI: 29. Processed commits data
+    WebUI-->>User: 30. Display Pulse Dashboard
 
-    Note over User, GitDB: Получение WIP веток
-    User->>WebUI: 31. Переход на WIP Dashboard
+    Note over User, GitDB: Get WIP Branches
+    User->>WebUI: 31. Navigate to WIP Dashboard
     WebUI->>Backend: 32. GET /api/pulse/wip-branches
     Backend->>SferaAPI: 33. GET /projects/{key}/repos/{repo}/branches
-    SferaAPI->>GitDB: 34. Запрос веток репозитория
-    GitDB-->>SferaAPI: 35. Список веток
-    SferaAPI-->>Backend: 36. JSON с ветками
-    Backend-->>WebUI: 37. Фильтрация WIP веток
-    WebUI-->>User: 38. Отображение WIP Dashboard
+    SferaAPI->>GitDB: 34. Query repository branches
+    GitDB-->>SferaAPI: 35. Branches list
+    SferaAPI-->>Backend: 36. JSON with branches
+    Backend-->>WebUI: 37. Filter WIP branches
+    WebUI-->>User: 38. Display WIP Dashboard
 
-    Note over User, GitDB: Получение Pull Requests
-    User->>WebUI: 39. Запрос Pull Requests
+    Note over User, GitDB: Get Pull Requests
+    User->>WebUI: 39. Request Pull Requests
     WebUI->>Backend: 40. GET /api/sfera/projects/{key}/repos/{repo}/pull-requests
     Backend->>SferaAPI: 41. GET /projects/{key}/repos/{repo}/pull-requests
-    SferaAPI->>GitDB: 42. Запрос PR из репозитория
-    GitDB-->>SferaAPI: 43. Данные Pull Requests
-    SferaAPI-->>Backend: 44. JSON с PR
-    Backend-->>WebUI: 45. Данные Pull Requests
-    WebUI-->>User: 46. Отображение Pull Requests
+    SferaAPI->>GitDB: 42. Query PR from repository
+    GitDB-->>SferaAPI: 43. Pull Requests data
+    SferaAPI-->>Backend: 44. JSON with PR
+    Backend-->>WebUI: 45. Pull Requests data
+    WebUI-->>User: 46. Display Pull Requests
 
-    Note over User, GitDB: Обработка ошибок
-    alt Ошибка аутентификации
+    Note over User, GitDB: Error Handling
+    alt Authentication Error
         SferaAPI-->>Backend: 401 Unauthorized
-        Backend-->>WebUI: Ошибка авторизации
-        WebUI-->>User: Запрос повторного входа
-    else Ошибка сети
+        Backend-->>WebUI: Authorization error
+        WebUI-->>User: Request re-login
+    else Network Error
         SferaAPI-->>Backend: Timeout/Connection Error
         Backend-->>WebUI: 502 Bad Gateway
-        WebUI-->>User: Сообщение об ошибке сети
-    else Ошибка данных
-        GitDB-->>SferaAPI: Данные недоступны
+        WebUI-->>User: Network error message
+    else Data Error
+        GitDB-->>SferaAPI: Data unavailable
         SferaAPI-->>Backend: 404 Not Found
-        Backend-->>WebUI: Пустой результат
-        WebUI-->>User: "Нет данных для отображения"
+        Backend-->>WebUI: Empty result
+        WebUI-->>User: No data to display
     end
 ```
 

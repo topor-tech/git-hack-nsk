@@ -33,6 +33,12 @@ export default function Navbar({ onLogout }: NavbarProps) {
         >
           WIP
         </Link>
+        <Link
+          to={createLinkWithParams("/dashboard")}
+          className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+        >
+          Dashboard
+        </Link>
       </div>
       <div className="navbar-actions">
         <button onClick={onLogout} className="logout-btn">
