@@ -18,7 +18,7 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://127.0.0.1:4173",
         "https://sfera.gitcto.space",
-        "http://sfera.gitcto.space",
+        "https://sfera.gitcto.space",
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
