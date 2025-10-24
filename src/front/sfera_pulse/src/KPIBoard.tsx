@@ -6,6 +6,37 @@ import Tooltip from './components/Tooltip';
 import { kpiBoardService, type KPIBoardStats, type DeveloperKPI } from './api/kpi';
 import './KPIBoard.css';
 
+// Color indication helper functions
+const getThroughputColor = (score: number): string => {
+  if (score > 1) return 'green';
+  if (score < 0.1) return 'red';
+  return 'yellow';
+};
+
+const getCycleTimeColor = (score: number): string => {
+  if (score > 4) return 'green';
+  if (score < 1) return 'red';
+  return 'yellow';
+};
+
+const getQualityColor = (score: number): string => {
+  if (score > 50) return 'green';
+  if (score < 10) return 'red';
+  return 'yellow';
+};
+
+const getFocusColor = (score: number): string => {
+  if (score > 90) return 'green';
+  if (score < 70) return 'red';
+  return 'yellow';
+};
+
+const getOverallScoreColor = (score: number): string => {
+  if (score > 50) return 'green';
+  if (score < 20) return 'red';
+  return 'yellow';
+};
+
 interface KPIBoardProps {
   onLogout: () => void;
 }
@@ -214,7 +245,7 @@ export default function KPIBoard({ onLogout }: KPIBoardProps) {
                   position="top"
                   maxWidth="400px"
                 >
-                  <div className="average-item">
+                  <div className={`average-item score-${getThroughputColor(kpiData.team_averages.average_throughput)}`}>
                     <div className="average-value">{kpiData.team_averages.average_throughput.toFixed(2)}</div>
                     <div className="average-label">Avg Throughput</div>
                   </div>
@@ -240,7 +271,7 @@ export default function KPIBoard({ onLogout }: KPIBoardProps) {
                   position="top"
                   maxWidth="400px"
                 >
-                  <div className="average-item">
+                  <div className={`average-item score-${getCycleTimeColor(kpiData.team_averages.average_cycle_time)}`}>
                     <div className="average-value">{kpiData.team_averages.average_cycle_time.toFixed(2)}</div>
                     <div className="average-label">Avg Cycle Time</div>
                   </div>
@@ -267,36 +298,9 @@ export default function KPIBoard({ onLogout }: KPIBoardProps) {
                   position="top"
                   maxWidth="400px"
                 >
-                  <div className="average-item">
+                  <div className={`average-item score-${getQualityColor(kpiData.team_averages.average_quality)}`}>
                     <div className="average-value">{kpiData.team_averages.average_quality.toFixed(2)}</div>
                     <div className="average-label">Avg Quality</div>
-                  </div>
-                </Tooltip>
-                <Tooltip
-                  content={
-                    <div className="metric-tooltip">
-                      <div className="metric-category">ACTIVITY PATTERN METRICS</div>
-                      <p className="metric-description">Measures work schedule patterns and timing analysis.</p>
-                      <div className="calculation-steps">
-                        <h5>Calculation Steps:</h5>
-                        <ol>
-                          <li>Analyze commits by day of week and hour</li>
-                          <li>Count weekend commits (Saturday/Sunday)</li>
-                          <li>Count work hours commits (9 AM - 5 PM)</li>
-                          <li>Calculate work hours ratio and weekend ratio</li>
-                          <li>Calculate activity score: (work_hours_ratio × 80) + (weekend_ratio × 20)</li>
-                        </ol>
-                      </div>
-                      <div className="formula">Activity Score = (Work Hours Ratio × 80) + (Weekend Ratio × 20)</div>
-                      <div className="overall-weight">Weight: 15% of Overall Score</div>
-                    </div>
-                  }
-                  position="top"
-                  maxWidth="400px"
-                >
-                  <div className="average-item">
-                    <div className="average-value">{kpiData.team_averages.average_activity.toFixed(2)}</div>
-                    <div className="average-label">Avg Activity</div>
                   </div>
                 </Tooltip>
                 <Tooltip
@@ -307,21 +311,21 @@ export default function KPIBoard({ onLogout }: KPIBoardProps) {
                       <div className="calculation-steps">
                         <h5>Weight Distribution:</h5>
                         <ol>
-                          <li>Throughput: 25% weight</li>
+                          <li>Throughput: 500% weight</li>
                           <li>Cycle Time: 20% weight</li>
                           <li>Work in Progress: 15% weight</li>
                           <li>Quality: 25% weight</li>
                           <li>Activity: 15% weight</li>
                         </ol>
                       </div>
-                      <div className="formula">Overall = (Throughput×0.25) + (Cycle×0.20) + (WIP×0.15) + (Quality×0.25) + (Activity×0.15)</div>
+                      <div className="formula">Overall = (Throughput×5.0) + (Cycle×0.20) + (WIP×0.15) + (Quality×0.25) + (Activity×0.15)</div>
                       <div className="overall-weight">Final Weighted Score</div>
                     </div>
                   }
                   position="top"
                   maxWidth="400px"
                 >
-                  <div className="average-item">
+                  <div className={`average-item score-${getOverallScoreColor(kpiData.team_averages.average_overall)}`}>
                     <div className="average-value">{kpiData.team_averages.average_overall.toFixed(2)}</div>
                     <div className="average-label">Avg Overall Score</div>
                   </div>
@@ -344,10 +348,6 @@ export default function KPIBoard({ onLogout }: KPIBoardProps) {
                 <div className="performer-item">
                   <div className="performer-category">Quality</div>
                   <div className="performer-name">{kpiData.top_performers.quality}</div>
-                </div>
-                <div className="performer-item">
-                  <div className="performer-category">Activity</div>
-                  <div className="performer-name">{kpiData.top_performers.activity}</div>
                 </div>
                 <div className="performer-item">
                   <div className="performer-category">Overall</div>
@@ -396,14 +396,14 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
               <div className="calculation-steps">
                 <h5>Weight Distribution:</h5>
                 <ol>
-                  <li>Throughput: 25% weight</li>
+                  <li>Throughput: 500% weight</li>
                   <li>Cycle Time: 20% weight</li>
                   <li>Work in Progress: 15% weight</li>
                   <li>Quality: 25% weight</li>
                   <li>Activity: 15% weight</li>
                 </ol>
               </div>
-              <div className="formula">Overall = (Throughput×0.25) + (Cycle×0.20) + (WIP×0.15) + (Quality×0.25) + (Activity×0.15)</div>
+              <div className="formula">Overall = (Throughput×5.0) + (Cycle×0.20) + (WIP×0.15) + (Quality×0.25) + (Activity×0.15)</div>
               <div className="overall-weight">Final Weighted Score</div>
             </div>
           }
@@ -412,7 +412,7 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
         >
           <div className="overall-score">
             <span className="score-label">Overall Score</span>
-            <span className="score-value">{developer.overall_score.toFixed(2)}</span>
+            <span className={`score-value score-${getOverallScoreColor(developer.overall_score)}`}>{developer.overall_score.toFixed(2)}</span>
           </div>
         </Tooltip>
       </div>
@@ -436,7 +436,7 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
                   </ol>
                 </div>
                 <div className="formula">Throughput Score = Commits ÷ Analysis Period Days</div>
-                <div className="overall-weight">Weight: 25% of Overall Score</div>
+                <div className="overall-weight">Weight: 500% of Overall Score</div>
               </div>
             }
             position="top"
@@ -459,7 +459,9 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
             </div>
             <div className="metric-item">
               <span className="metric-label">Score</span>
-              <span className="metric-value">{developer.throughput.throughput_score.toFixed(2)}</span>
+              <span className={`metric-value score-${getThroughputColor(developer.throughput.throughput_score)}`}>
+                {developer.throughput.throughput_score.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
@@ -504,7 +506,9 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
             </div>
             <div className="metric-item">
               <span className="metric-label">Score</span>
-              <span className="metric-value">{developer.cycle_time.cycle_time_score.toFixed(2)}</span>
+              <span className={`metric-value score-${getCycleTimeColor(developer.cycle_time.cycle_time_score)}`}>
+                {developer.cycle_time.cycle_time_score.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
@@ -550,56 +554,13 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
             </div>
             <div className="metric-item">
               <span className="metric-label">Score</span>
-              <span className="metric-value">{developer.quality.quality_score.toFixed(2)}</span>
+              <span className={`metric-value score-${getQualityColor(developer.quality.quality_score)}`}>
+                {developer.quality.quality_score.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Activity Patterns */}
-        <div className="metric-section">
-          <Tooltip
-            content={
-              <div className="metric-tooltip">
-                <div className="metric-category">ACTIVITY PATTERN METRICS</div>
-                <p className="metric-description">Measures work schedule patterns and timing analysis.</p>
-                <div className="calculation-steps">
-                  <h5>Calculation Steps:</h5>
-                  <ol>
-                    <li>Analyze commits by day of week and hour</li>
-                    <li>Count weekend commits (Saturday/Sunday)</li>
-                    <li>Count work hours commits (9 AM - 5 PM)</li>
-                    <li>Calculate work hours ratio and weekend ratio</li>
-                    <li>Calculate activity score: (work_hours_ratio × 80) + (weekend_ratio × 20)</li>
-                  </ol>
-                </div>
-                <div className="formula">Activity Score = (Work Hours Ratio × 80) + (Weekend Ratio × 20)</div>
-                <div className="overall-weight">Weight: 15% of Overall Score</div>
-              </div>
-            }
-            position="top"
-            maxWidth="400px"
-          >
-            <h5>Activity Patterns</h5>
-          </Tooltip>
-          <div className="metric-grid">
-            <div className="metric-item">
-              <span className="metric-label">Most Active Day</span>
-              <span className="metric-value">{developer.activity_patterns.most_active_day}</span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Most Active Hour</span>
-              <span className="metric-value">{developer.activity_patterns.most_active_hour}</span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Work Hours Commits</span>
-              <span className="metric-value">{developer.activity_patterns.work_hours_commits}</span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Score</span>
-              <span className="metric-value">{developer.activity_patterns.activity_score.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
 
         {/* Work in Progress */}
         <div className="metric-section">
@@ -636,7 +597,9 @@ function DeveloperKPICard({ developer }: DeveloperKPICardProps) {
             </div>
             <div className="metric-item">
               <span className="metric-label">Focus Score</span>
-              <span className="metric-value">{developer.work_in_progress.focus_score.toFixed(2)}</span>
+              <span className={`metric-value score-${getFocusColor(developer.work_in_progress.focus_score)}`}>
+                {developer.work_in_progress.focus_score.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>

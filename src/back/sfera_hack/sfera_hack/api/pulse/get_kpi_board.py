@@ -315,7 +315,7 @@ def calculate_overall_kpi_score(throughput: DeveloperThroughput, cycle_time: Dev
     """Calculate overall KPI score for a developer"""
     # Weighted average of all metrics
     weights = {
-        'throughput': 0.25,
+        'throughput': 5.0,
         'cycle_time': 0.20,
         'wip': 0.15,
         'quality': 0.25,

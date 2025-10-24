@@ -62,7 +62,7 @@ class DeveloperKPI(BaseModel):
     work_in_progress: DeveloperWorkInProgress = Field(..., description="Work in progress metrics: concurrent work tracking and focus scoring")
     quality: DeveloperQualityMetrics = Field(..., description="Quality metrics: commit size patterns and consistency analysis")
     activity_patterns: DeveloperActivityPatterns = Field(..., description="Activity pattern metrics: work schedule and timing analysis")
-    overall_score: float = Field(..., description="Overall KPI score: weighted average of throughput(25%), cycle_time(20%), wip(15%), quality(25%), activity(15%)")
+    overall_score: float = Field(..., description="Overall KPI score: weighted average of throughput(500%), cycle_time(20%), wip(15%), quality(25%), activity(15%)")
 
 class KPIBoardStats(BaseModel):
     total_developers: int = Field(..., description="Total number of unique developers who made commits in the analysis period")
@@ -324,7 +324,7 @@ class OptimizedKPICalculator:
                                wip: DeveloperWorkInProgress, quality: DeveloperQualityMetrics, 
                                activity: DeveloperActivityPatterns) -> float:
         """Calculate overall KPI score"""
-        weights = {'throughput': 0.25, 'cycle_time': 0.20, 'wip': 0.15, 'quality': 0.25, 'activity': 0.15}
+        weights = {'throughput': 5.0, 'cycle_time': 0.20, 'wip': 0.15, 'quality': 0.25, 'activity': 0.15}
         
         overall_score = (
             throughput.throughput_score * weights['throughput'] +
