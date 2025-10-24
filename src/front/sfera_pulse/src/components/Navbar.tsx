@@ -22,6 +22,13 @@ export default function Navbar({ onLogout }: NavbarProps) {
       </div>
       <div className="navbar-nav">
         <Link
+          to={createLinkWithParams("/dashboard")}
+          className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+        >
+          Dashboard
+        </Link>
+
+        <Link
           to={createLinkWithParams("/pulse")}
           className={`nav-link ${location.pathname === '/pulse' ? 'active' : ''}`}
         >
