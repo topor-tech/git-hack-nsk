@@ -133,6 +133,11 @@
   grid-column: 1 / -1;
 }
 
+/* Hourly Activity */
+.hourly-activity {
+  grid-column: 1 / -1;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
