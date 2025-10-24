@@ -135,6 +135,13 @@ class SferaAPIClient:
         endpoint = f"/projects/{project_key}/repos/{repo_name}/commits/{sha1}/diff"
         return await self._make_request("GET", endpoint, params=params)
 
+    async def get_user_suggestions(
+        self, project_key: str, repo_name: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Get user suggestions for a project repository"""
+        endpoint = f"/projects/{project_key}/repos/{repo_name}/pull-requests/user-suggestions"
+        return await self._make_request("GET", endpoint, params=params)
+
 
 class SferaAuthClient:
     """Client for Sfera authentication"""

@@ -4,6 +4,7 @@ import { authService, type LoginRequest } from './api/auth'
 import Pulse from './Pulse.tsx'
 import WIP from './WIP.tsx'
 import Dashboard from './Dashboard.tsx'
+import KPIBoard from './KPIBoard.tsx'
 import './App.css'
 
 function App() {
@@ -103,6 +104,7 @@ function App() {
           <Route path="/pulse" element={<Pulse onLogout={handleLogout} />} />
           <Route path="/wip" element={<WIP onLogout={handleLogout} />} />
           <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} />} />
+          <Route path="/kpi-board" element={<KPIBoard onLogout={handleLogout} />} />
           <Route path="/" element={<Navigate to="/pulse" replace />} />
           <Route path="*" element={<Navigate to="/pulse" replace />} />
         </Routes>

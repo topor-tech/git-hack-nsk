@@ -118,8 +118,8 @@ export default function ProjectRepositorySelector({
               onChange={handleProjectChange}
               disabled={loading}
             >
-              {projects.map((project) => (
-                <option key={project.id} value={project.full_name}>
+              {projects.map((project, index) => (
+                <option key={`project-${project.id}-${index}`} value={project.full_name}>
                   {project.full_name}
                 </option>
               ))}
@@ -142,8 +142,8 @@ export default function ProjectRepositorySelector({
                     onChange={handleRepositoryChange}
                     disabled={loading}
                   >
-                    {repositories.map((repository) => (
-                      <option key={repository.id} value={repository.name}>
+                    {repositories.map((repository, index) => (
+                      <option key={`repository-${repository.id}-${index}`} value={repository.name}>
                         {repository.name}
                       </option>
                     ))}
@@ -162,14 +162,14 @@ export default function ProjectRepositorySelector({
                 onChange={handleLimitChange}
                 disabled={loading}
               >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-                <option value={200}>200</option>
-                <option value={500}>500</option>
-                <option value={1000}>1000</option>
+                <option key="5" value={5}>5</option>
+                <option key="10" value={10}>10</option>
+                <option key="20" value={20}>20</option>
+                <option key="50" value={50}>50</option>
+                <option key="100" value={100}>100</option>
+                <option key="200" value={200}>200</option>
+                <option key="500" value={500}>500</option>
+                <option key="1000" value={1000}>1000</option>
               </select>
             </div>
           )}
